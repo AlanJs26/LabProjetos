@@ -1,6 +1,7 @@
 from scipy import io
 import numpy as np
 import os.path
+import yaml
 
 
 def load_matlab_data(file: str):
@@ -30,37 +31,56 @@ def chunk_data(data, chunk_size):
     return data[: len(data) - len(data) % chunk_size].reshape(-1, chunk_size, 7)
 
 
-def extract_classes(data):
+def extract_classes(data, class_id: int):
     """
     Process data by extracting the most frequent class
     and removing the last column from the data.
     """
     classes = np.zeros(len(data))
     for i, item in enumerate(data):
-        classes[i] = np.bincount(item[:, -1].astype(int)).argmax()
+        classes[i] = (
+            0 if np.bincount(item[:, -1].astype(int)).argmax() == 0 else class_id
+        )
     data = data[:, :, :-1]
     return data, classes
 
 
-def get_data(files: list[str], chunk_size: int = 50):
+def get_data(field: str):
     """
     Load and process data from a list of .mat files.
     """
+    with open("config/params.yaml", "r") as f:
+        params = yaml.safe_load(f)
+
+    available_classes: list[str] = params["classes"]
+    chunk_size = params["timesteps"]
+    dataset_description: dict[str, list[str]] = params[field]
+
     all_data = []
     all_classes = []
-    for file in files:
-        ext = os.path.splitext(file)[1]
-        if ext == ".mat":
-            data = load_matlab_data(file)[1]
-        elif ext == ".csv":
-            data = load_csv_data(file)
-        else:
-            raise Exception(f"Unknown file extension: {file}")
-        data = chunk_data(data, chunk_size)
-        data, classes = extract_classes(data)
-        all_data.append(data)
-        all_classes.append(classes)
+    for curr_class, files in dataset_description.items():
+
+        for file in files:
+            ext = os.path.splitext(file)[1]
+            if ext == ".mat":
+                data = load_matlab_data(file)[1]
+            elif ext == ".csv":
+                data = load_csv_data(file)
+            else:
+                raise Exception(f"Unknown file extension: {file}")
+
+            data = chunk_data(data, chunk_size)
+
+            class_id = available_classes.index(curr_class)
+            if class_id == -1:
+                raise Exception(
+                    f"Invalid class_id = {class_id}. Check train_params.yaml if your data match the classes"
+                )
+            class_id += 1
+
+            data, classes = extract_classes(data, class_id)
+            all_data.append(data)
+            all_classes.append(classes)
     all_data = np.concatenate(all_data, axis=0)
     all_classes = np.concatenate(all_classes, axis=0)
     return all_data, all_classes
-

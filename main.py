@@ -10,31 +10,32 @@ datasets = [
 
 
 @app.command()
-def train(model_name: str = "model", timesteps: int = 50):
+def train(model_name: str = "model"):
     """
-    Train model and save it into './models/{model_name}.h5'\n
-
-    --timesteps : number of data elements to feed the model and once
+    Train model and save it into './models/{model_name}.h5'
     """
     from src.train_lib import train_model
 
-    train_model(datasets, model_name, timesteps)
+    train_model("train_data", model_name)
 
 
 @app.command()
-def metrics(model_name: str = "model", n_pred: int = 100, timesteps: int = 50):
+def metrics(model_name: str = "model", n_pred: int = 100):
     """
     Load model and show a confusion matrix\n
 
-    --n-pred : number of predictions to construct the confusion matrix\n
-    --timesteps : number of data elements to feed the model and once
+    --n-pred : number of predictions to construct the confusion matrix
     """
     from src.train_lib import load_classifier
     import numpy as np
     from sklearn.metrics import confusion_matrix
     from src.data_helpers import get_data
+    import yaml
 
-    data, classes = get_data(datasets, chunk_size=timesteps)
+    with open("config/params.yaml", "r") as f:
+        params = yaml.safe_load(f)
+
+    data, classes = get_data("test_data")
 
     classify_gesture = load_classifier(model_name)
 
@@ -59,7 +60,9 @@ def metrics(model_name: str = "model", n_pred: int = 100, timesteps: int = 50):
     from sklearn.metrics import ConfusionMatrixDisplay
     import matplotlib.pyplot as plt
 
-    disp = ConfusionMatrixDisplay(confusion_matrix=cm)
+    disp = ConfusionMatrixDisplay(
+        confusion_matrix=cm, display_labels=["none"] + params["classes"]
+    )
     disp.plot(cmap="viridis", values_format="d")
     plt.title("Matriz de Confusão")
     plt.show()

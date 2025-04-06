@@ -14,10 +14,6 @@ body {
   align-items: center;
   flex-direction: column;
   height: 100vh;
-
-  &>h1 {
-    flex: 1;
-  }
 }
 
 main {
@@ -25,6 +21,7 @@ main {
   justify-content: end;
   align-items: center;
   width: 100%;
+  flex: 1;
 
   --container-size: 200px;
   --current-size: 400px;

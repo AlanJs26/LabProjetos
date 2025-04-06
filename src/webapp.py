@@ -4,19 +4,22 @@ import time
 import serial
 from src.train_lib import load_classifier
 import numpy as np
+import yaml
 
 app = Flask(__name__, template_folder="flask", static_folder="flask/static")
 socketio = SocketIO(app)
 thread = None
 
 RUNNING = False
-BAUDRATE = 115200
-COM = "COM5"
-TIMESTEPS = 50
+
+with open("config/params.yaml", "r") as f:
+    params = yaml.safe_load(f)
+classes = ["none"] + params["classes"]
 
 
 def serial_thread(porta_serial: str, baudrate: int, timesteps: int, model_name: str):
     global RUNNING
+    global classes
 
     RUNNING = True
 
@@ -46,7 +49,6 @@ def serial_thread(porta_serial: str, baudrate: int, timesteps: int, model_name: 
                 data.append(dados_float)
 
                 if len(data) == timesteps:
-                    classes = ["Nada", "Wazari", "Ippon"]
                     prediction = classify_gesture(
                         np.expand_dims(np.array(data), axis=0)
                     )
@@ -71,7 +73,8 @@ def connect():
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    global classes
+    return render_template("index.html", classes=classes)
 
 
 def run_webapp(porta_serial: str, baudrate: int, timesteps: int, model_name: str):

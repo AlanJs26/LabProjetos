@@ -1,0 +1,20 @@
+
+# number of data elements to feed the model and once
+timesteps: 50
+
+train_data:
+  Ippon: 
+    - "matlab_datasets/ippon-dataset.mat"
+  Wazari:
+    - "matlab_datasets/wazari-dataset.mat"
+
+test_data:
+  Ippon: 
+    - "matlab_datasets/ippon-dataset.mat"
+  Wazari:
+    - "matlab_datasets/wazari-dataset.mat"
+
+classes:
+  - Ippon
+  - Wazari
+

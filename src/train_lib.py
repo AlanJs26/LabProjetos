@@ -44,11 +44,17 @@ class ReshapeTo3D(BaseEstimator, TransformerMixin):
         return X.reshape(-1, self.timesteps, self.num_features)
 
 
-def train_model(datasets: list[str], name: str, timesteps=50):
+def train_model(dataset_name: str, name: str):
+    import yaml
+
+    with open("config/params.yaml", "r") as f:
+        params = yaml.safe_load(f)
+
     # Carregar dados
-    data, classes = get_data(datasets, chunk_size=timesteps)
+    data, classes = get_data(dataset_name)
 
     num_features = data.shape[2]
+    timesteps = params["timesteps"]
 
     # Divisão treino/teste (corrigindo vazamento de dados)
     X_train, X_test, y_train, y_test = train_test_split(
