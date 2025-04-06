@@ -79,8 +79,10 @@ def captura(classe: str, COM: str = "COM5", baudrate: int = 115200):
     from src.mpu_read_serial import app as flask_app
 
     # Inicia leitura da serial em thread separada
-    # thread = threading.Thread(target=leitura_serial, args=(classe, COM, baudrate), daemon=True)
-    # thread.start()
+    thread = threading.Thread(
+        target=leitura_serial, args=(classe, COM, baudrate), daemon=True
+    )
+    thread.start()
 
     flask_app.run(host="0.0.0.0", port=5000)
 
@@ -95,6 +97,25 @@ def visualize(file: Path):
 
     df = pd.read_csv(file)
     visualizar_dataframe(df)
+
+
+@app.command()
+def web(
+    COM: str = "COM5",
+    baudrate: int = 115200,
+    timesteps: int = 50,
+    model_name: str = "model",
+):
+    """
+    Hospeda uma página web para visualização das detecções do modelo em tempo real\n
+
+    --timesteps : number of data elements to feed the model and once\n
+    --COM : porta serial em que os dados serão recebidos\n
+    --baudrate : frequencia da porta serial
+    """
+    from src.webapp import run_webapp
+
+    run_webapp(COM, baudrate, timesteps, model_name)
 
 
 if __name__ == "__main__":

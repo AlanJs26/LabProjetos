@@ -1,0 +1,95 @@
+@keyframes fromTop {
+  0% {
+    top: calc(-0.5*var(--container-size)*6/4 - var(--current-size)*2);
+  }
+
+  100% {
+    top: calc(-0.5*var(--container-size)*6/4);
+  }
+}
+
+body {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  height: 100vh;
+
+  &>h1 {
+    flex: 1;
+  }
+}
+
+main {
+  display: flex;
+  justify-content: end;
+  align-items: center;
+  width: 100%;
+
+  --container-size: 200px;
+  --current-size: 400px;
+
+  min-height: calc(var(--current-size)*6/4);
+
+  &>div {
+    width: calc(var(--current-size)/2);
+    position: relative;
+  }
+
+}
+
+main container {
+  --index: 0;
+  --gap: 10px;
+
+  --x: calc(-1*var(--container-size)*(var(--index) - 1) - var(--current-size)/2 - var(--container-size)/2 - var(--gap)*var(--index));
+
+  &.current {
+    --container-size: var(--current-size);
+    --x: 0px;
+  }
+
+  opacity: max(0.05, calc(1 - 1/5 * var(--index)));
+
+  transform: translatex(var(--x));
+  transition: all 200ms ease;
+  animation: 1s ease fromTop;
+
+  position: absolute;
+  left: calc(-0.5*var(--container-size));
+  top: calc(-0.5*var(--container-size)*6/4);
+
+  min-width: var(--container-size);
+  height: calc(var(--container-size) * 6/4);
+  background: #ececec;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  border-radius: 10px;
+  gap: 10px;
+  padding: 20px;
+  box-sizing: border-box;
+
+  & span {
+    font-size: 20pt;
+  }
+
+  & div {
+    flex: 1;
+    position: relative;
+  }
+
+  & img {
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    max-height: 100%;
+    max-width: 100%;
+    object-fit: cover;
+    width: 80%;
+  }
+}
+
+button {
+  z-index: 100
+}

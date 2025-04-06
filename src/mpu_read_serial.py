@@ -87,8 +87,7 @@ def leitura_serial(titulo: str, porta_serial: str, baudrate: int):
         except KeyboardInterrupt:
             pass
 
-        print("🛑 Leitura serial encerrada.")
-
+    print("🛑 Leitura serial encerrada.")
     ser.close()
 
 
