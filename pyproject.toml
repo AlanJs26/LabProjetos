@@ -10,8 +10,10 @@ dependencies = [
     "matplotlib>=3.10.1",
     "pandas>=2.2.3",
     "pygame>=2.6.1",
+    "pyqt6>=6.8.1",
     "pyserial>=3.5",
     "scikit-learn>=1.6.1",
     "scipy>=1.15.2",
     "tensorflow>=2.19.0",
+    "typer>=0.15.2",
 ]
