@@ -37,7 +37,7 @@ def leitura_serial(titulo: str, porta_serial: str, baudrate: int):
         print("⚠️ Erro ao abrir a porta serial!")
         return
 
-    atualizar_visualizacao, parada_visualizacao = visualizar_realtime()
+    # atualizar_visualizacao, parada_visualizacao = visualizar_realtime()
 
     with open(csv_path, mode="w", newline="") as file:
         writer = csv.writer(file)
@@ -61,7 +61,8 @@ def leitura_serial(titulo: str, porta_serial: str, baudrate: int):
         )
 
         try:
-            while not parada_visualizacao["sair"]:
+            # while not parada_visualizacao["sair"]:
+            while True:
                 linha = ser.readline().decode("utf-8").strip()
 
                 if not linha:
@@ -79,11 +80,11 @@ def leitura_serial(titulo: str, porta_serial: str, baudrate: int):
                     writer.writerow(linha_completa)
                     print(",".join([str(l) for l in linha_completa]))
 
-                    atualizar_visualizacao(*linha_completa)
+                    # atualizar_visualizacao(*linha_completa)
 
                 except ValueError:
                     print("⚠️ Dado inválido! Encerrando leitura.")
-                    break
+                    continue
         except KeyboardInterrupt:
             pass
 

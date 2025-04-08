@@ -81,13 +81,17 @@ def captura(classe: str, COM: str = "COM5", baudrate: int = 115200):
     from src.mpu_read_serial import leitura_serial
     from src.mpu_read_serial import app as flask_app
 
-    # Inicia leitura da serial em thread separada
-    thread = threading.Thread(
-        target=leitura_serial, args=(classe, COM, baudrate), daemon=True
-    )
-    thread.start()
+    try:
+        # Inicia leitura da serial em thread separada
+        thread = threading.Thread(
+            target=leitura_serial, args=(classe, COM, baudrate), daemon=True
+        )
+        thread.start()
 
-    flask_app.run(host="0.0.0.0", port=5000)
+        flask_app.run(host="0.0.0.0", port=5000)
+    except KeyboardInterrupt:
+        import os
+        os._exit(1)
 
 
 @app.command()
