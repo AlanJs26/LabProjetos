@@ -10,6 +10,7 @@ from src.visualizer import visualizar_realtime
 
 app = Flask(__name__)
 MOVIMENTO_ATIVO = False
+COUNTER = 0
 TITULO = ""
 
 
@@ -61,6 +62,7 @@ def leitura_serial(titulo: str, porta_serial: str, baudrate: int):
         )
 
         try:
+            print("🔄 Iniciando leitura serial...")
             # while not parada_visualizacao["sair"]:
             while True:
                 linha = ser.readline().decode("utf-8").strip()
@@ -78,7 +80,7 @@ def leitura_serial(titulo: str, porta_serial: str, baudrate: int):
                     linha_completa = [timestamp] + dados_float + [int(MOVIMENTO_ATIVO)]
 
                     writer.writerow(linha_completa)
-                    print(",".join([str(l) for l in linha_completa]))
+                    print(",".join([str(l) for l in linha_completa]) + f" COUNT: {COUNTER}")
 
                     # atualizar_visualizacao(*linha_completa)
 
@@ -104,6 +106,9 @@ def index():
         <head>
             <title>Marcador de Movimento</title>
             <style>
+                * {
+                    user-select: none;
+                }
                 body {
                     font-family: Arial; text-align: center; padding: 30px;
                     display: flex; flex-direction: column; height: 100vh; margin: 0; padding: 0;
@@ -150,10 +155,13 @@ def index():
 @app.route("/set_movimento", methods=["POST"])
 def set_movimento():
     global MOVIMENTO_ATIVO
+    global COUNTER
     data = request.get_json()
     MOVIMENTO_ATIVO = data["ativo"]
+    if MOVIMENTO_ATIVO:
+        COUNTER += 1
     print(
-        f"{'🟢 Iniciou' if MOVIMENTO_ATIVO else '🔴 Parou'} o movimento às {datetime.now()}"
+        f"{'🟢 Iniciou' if MOVIMENTO_ATIVO else '🔴 Parou'} o movimento número {COUNTER}"
     )
     return jsonify(success=True)
 
