@@ -55,6 +55,7 @@ def train_model(dataset_name: str, name: str):
 
     num_features = data.shape[2]
     timesteps = params["timesteps"]
+    n_classes = len(params["classes"])+1
 
     # Divisão treino/teste (corrigindo vazamento de dados)
     X_train, X_test, y_train, y_test = train_test_split(
@@ -75,18 +76,18 @@ def train_model(dataset_name: str, name: str):
     X_test_preprocessed = preprocessing_pipe.transform(X_test)
 
     # Converter labels para one-hot encoding
-    y_train_cat = keras.utils.to_categorical(y_train, 3)
-    y_test_cat = keras.utils.to_categorical(y_test, 3)
+    y_train_cat = keras.utils.to_categorical(y_train, n_classes)
+    y_test_cat = keras.utils.to_categorical(y_test, n_classes)
 
     # Construir modelo LSTM
     model = keras.Sequential(
         [
             layers.LSTM(
-                64, return_sequences=True, input_shape=(timesteps, num_features)
+                64, return_sequences=True, input_shape=(None, num_features)
             ),
             layers.LSTM(32),
             layers.Dense(32, activation="relu"),
-            layers.Dense(3, activation="softmax"),
+            layers.Dense(n_classes, activation="softmax"),
         ]
     )
 
@@ -113,7 +114,8 @@ def train_model(dataset_name: str, name: str):
 def build_classifier(model, preprocessor):
     def classify_gesture(raw_data):
         processed_data = preprocessor.transform(raw_data)
-        return np.argmax(model.predict(processed_data))
+        
+        return np.argmax(model.predict(processed_data, verbose = 0))
 
     return classify_gesture
 

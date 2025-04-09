@@ -28,7 +28,9 @@ def chunk_data(data, chunk_size):
     """
     Chunk data into smaller pieces of size chunk_size.
     """
-    return data[: len(data) - len(data) % chunk_size].reshape(-1, chunk_size, 7)
+    length = data.shape[0]
+    num_features = data.shape[1]
+    return data[: length - length % chunk_size, :].reshape(-1, chunk_size, num_features)
 
 
 def extract_classes(data, class_id: int):

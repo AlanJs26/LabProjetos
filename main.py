@@ -3,12 +3,6 @@ from pathlib import Path
 
 app = typer.Typer(context_settings={"help_option_names": ["-h", "--help"]})
 
-datasets = [
-    "matlab_datasets/ippon-dataset.mat",
-    "matlab_datasets/wazari-dataset.mat",
-]
-
-
 @app.command()
 def train(model_name: str = "model"):
     """
@@ -28,9 +22,10 @@ def metrics(model_name: str = "model", n_pred: int = 100):
     """
     from src.train_lib import load_classifier
     import numpy as np
-    from sklearn.metrics import confusion_matrix
+    from sklearn.metrics import confusion_matrix, accuracy_score
     from src.data_helpers import get_data
     import yaml
+    from tqdm import tqdm
 
     with open("config/params.yaml", "r") as f:
         params = yaml.safe_load(f)
@@ -40,7 +35,7 @@ def metrics(model_name: str = "model", n_pred: int = 100):
     classify_gesture = load_classifier(model_name)
 
     # Seleciona N elementos aleatórios de data e classes
-    indices = np.random.choice(len(data), size=n_pred, replace=False)
+    indices = np.random.choice(len(data), size=len(data) if n_pred <= 0 else min(n_pred, len(data)), replace=False)
     X_test = [data[i] for i in indices]
     y_test = [classes[i] for i in indices]
 
@@ -48,14 +43,15 @@ def metrics(model_name: str = "model", n_pred: int = 100):
     y_pred = []
     y_true = []
 
-    # Realiza a classificação e armazena os resultados
-    for i in range(n_pred):
+    # Realiza a classificação e armazena os resultados com barra de progresso
+    for i in tqdm(range(len(X_test)), desc="Classifying"):
         classe_predita = classify_gesture(np.expand_dims(X_test[i], axis=0))
         y_pred.append(classe_predita)
         y_true.append(y_test[i])
 
     # Calcula a confusion matrix
     cm = confusion_matrix(y_true, y_pred)
+    print("Acuracia: ", accuracy_score(y_true, y_pred))
 
     from sklearn.metrics import ConfusionMatrixDisplay
     import matplotlib.pyplot as plt

@@ -3,18 +3,41 @@
 timesteps: 50
 
 train_data:
-  Ippon: 
-    - "matlab_datasets/ippon-dataset.mat"
+  Ippon:
+    - dataset/ippon.csv
+  Matte:
+    - dataset/matte-novo.csv
+    - dataset/matte.csv
+  ScoreChange:
+    - dataset/scorechange.csv
+  Shido:
+    - dataset/shido.csv
+  Toketa:
+    - dataset/toketa.csv
   Wazari:
-    - "matlab_datasets/wazari-dataset.mat"
+    - dataset/wazari-novo-novo.csv
+    - dataset/wazari-novo.csv
 
 test_data:
-  Ippon: 
-    - "matlab_datasets/ippon-dataset.mat"
+  Ippon:
+    - dataset/ippon.csv
+  Matte:
+    - dataset/matte-novo-novo-novo.csv
+    - dataset/matte-novo-novo.csv
+  ScoreChange:
+    - dataset/scorechange-novo.csv
+  Shido:
+    - dataset/shido-novo.csv
+  Toketa:
+    - dataset/toketa-novo.csv
   Wazari:
-    - "matlab_datasets/wazari-dataset.mat"
+    - dataset/wazari.csv
 
 classes:
   - Ippon
+  - Matte
   - Wazari
+  - ScoreChange
+  - Shido
+  - Toketa
 
