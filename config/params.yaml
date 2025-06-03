@@ -2,42 +2,17 @@
 # number of data elements to feed the model and once
 timesteps: 50
 
-train_data:
-  Ippon:
-    - dataset/ippon.csv
-  Matte:
-    - dataset/matte-novo.csv
-    - dataset/matte.csv
-  ScoreChange:
-    - dataset/scorechange.csv
-  Shido:
-    - dataset/shido.csv
-  Toketa:
-    - dataset/toketa.csv
-  Wazari:
-    - dataset/wazari-novo-novo.csv
-    - dataset/wazari-novo.csv
-
-test_data:
-  Ippon:
-    - dataset/ippon.csv
-  Matte:
-    - dataset/matte-novo-novo-novo.csv
-    - dataset/matte-novo-novo.csv
-  ScoreChange:
-    - dataset/scorechange-novo.csv
-  Shido:
-    - dataset/shido-novo.csv
-  Toketa:
-    - dataset/toketa-novo.csv
-  Wazari:
-    - dataset/wazari.csv
+dataset_folder: dataset
 
 classes:
-  - Ippon
-  - Matte
-  - Wazari
-  - ScoreChange
-  - Shido
-  - Toketa
+  - ippon:Ippon
+  - matte:Matte
+  - wazari:Wazari
+  - scorechange:ScoreChange
+  - shido:Shido
+  - toketa:Toketa
 
+ignored_classes:
+  - ScoreChange
+  - Toketa
+  - Matte

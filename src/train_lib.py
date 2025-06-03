@@ -44,18 +44,18 @@ class ReshapeTo3D(BaseEstimator, TransformerMixin):
         return X.reshape(-1, self.timesteps, self.num_features)
 
 
-def train_model(dataset_name: str, name: str):
+def train_model(name: str):
     import yaml
 
     with open("config/params.yaml", "r") as f:
         params = yaml.safe_load(f)
 
     # Carregar dados
-    data, classes = get_data(dataset_name)
+    data, classes = get_data("train")
 
     num_features = data.shape[2]
     timesteps = params["timesteps"]
-    n_classes = len(params["classes"])+1
+    n_classes = len(params["classes"]) + 1
 
     # Divisão treino/teste (corrigindo vazamento de dados)
     X_train, X_test, y_train, y_test = train_test_split(
@@ -82,9 +82,7 @@ def train_model(dataset_name: str, name: str):
     # Construir modelo LSTM
     model = keras.Sequential(
         [
-            layers.LSTM(
-                64, return_sequences=True, input_shape=(None, num_features)
-            ),
+            layers.LSTM(64, return_sequences=True, input_shape=(None, num_features)),
             layers.LSTM(32),
             layers.Dense(32, activation="relu"),
             layers.Dense(n_classes, activation="softmax"),
@@ -114,8 +112,8 @@ def train_model(dataset_name: str, name: str):
 def build_classifier(model, preprocessor):
     def classify_gesture(raw_data):
         processed_data = preprocessor.transform(raw_data)
-        
-        return np.argmax(model.predict(processed_data, verbose = 0))
+
+        return np.argmax(model.predict(processed_data, verbose=0))
 
     return classify_gesture
 

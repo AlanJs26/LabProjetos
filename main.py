@@ -5,13 +5,22 @@ app = typer.Typer(context_settings={"help_option_names": ["-h", "--help"]})
 
 
 @app.command()
+def debug():
+    from src.data_helpers import preload_data
+
+    preload_data("config/params.yaml", use_cache=True)
+
+
+@app.command()
 def train(model_name: str = "model"):
     """
     Train model and save it into './models/{model_name}.h5'
     """
     from src.train_lib import train_model
+    from src.data_helpers import preload_data
 
-    train_model("train_data", model_name)
+    preload_data("config/params.yaml", use_cache=True)
+    train_model(model_name)
 
 
 @app.command()
@@ -25,16 +34,15 @@ def metrics(model_name: str = "model", n_pred: int = 100):
     import numpy as np
     from sklearn.metrics import confusion_matrix, classification_report
 
-    from src.data_helpers import get_data
-    import yaml
+    from src.data_helpers import get_data, preload_data, get_classes
     from tqdm import tqdm
 
-    with open("config/params.yaml", "r") as f:
-        params = yaml.safe_load(f)
+    preload_data("config/params.yaml", use_cache=True)
 
-    data, classes = get_data("test_data")
+    data, classes = get_data("test")
 
     classify_gesture = load_classifier(model_name)
+    all_classes = get_classes()
 
     # Seleciona N elementos aleatórios de data e classes
     indices = np.random.choice(
@@ -57,18 +65,12 @@ def metrics(model_name: str = "model", n_pred: int = 100):
 
     # Calcula a confusion matrix
     cm = confusion_matrix(y_true, y_pred)
-    print(
-        classification_report(
-            y_true, y_pred, target_names=(["none"] + params["classes"])
-        )
-    )
+    print(classification_report(y_true, y_pred, target_names=all_classes))
 
     from sklearn.metrics import ConfusionMatrixDisplay
     import matplotlib.pyplot as plt
 
-    disp = ConfusionMatrixDisplay(
-        confusion_matrix=cm, display_labels=["none"] + params["classes"]
-    )
+    disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=all_classes)
     disp.plot(cmap="viridis", values_format="d")
     plt.title("Matriz de Confusão")
     plt.show()
