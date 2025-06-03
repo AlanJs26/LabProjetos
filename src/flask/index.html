@@ -21,7 +21,7 @@
   <h1>Detector de Movimentos para Arbitragem de Judô</h1>
 
   <main>
-    <button x-data @click="$store.movements.add('Wazari')">Clique</button>
+    <button x-data @click="$store.movements.addRandom()">Clique</button>
     <div>
       <template x-data x-for="data in $store.movements.data" :key="data.key">
 

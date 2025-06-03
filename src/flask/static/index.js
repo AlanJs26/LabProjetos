@@ -1,11 +1,21 @@
-const VALID_MOVEMENTS = ['Yuko', 'Wazari', 'Wazaari Awasete', 'Toketa', 'Sonomama', 'Osaekomi', 'Matte', 'Koka', 'Ippon', 'Hantei', 'Hajime']
 
 document.addEventListener('alpine:init', () => {
 
   Alpine.store('movements', {
     data: [],
+    // valid: ['Yuko', 'Wazari', 'Wazaari Awasete', 'Toketa', 'Sonomama', 'Osaekomi', 'Matte', 'Koka', 'Ippon', 'Hantei', 'Hajime'],
+    valid: ['Ippon', 'Matte', 'Wazari', 'ScoreChange', 'Toketa', 'Toketa'],
+
+
+    addRandom() {
+      const VALID_MOVEMENTS = this.valid
+      const movement = VALID_MOVEMENTS[Math.floor(Math.random() * VALID_MOVEMENTS.length)]
+
+      this.add(movement)
+    },
 
     add(new_movement) {
+      const VALID_MOVEMENTS = this.valid
       const movement_list = this.data
 
       if (movement_list.length > 10) {

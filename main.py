@@ -3,6 +3,7 @@ from pathlib import Path
 
 app = typer.Typer(context_settings={"help_option_names": ["-h", "--help"]})
 
+
 @app.command()
 def train(model_name: str = "model"):
     """
@@ -22,7 +23,8 @@ def metrics(model_name: str = "model", n_pred: int = 100):
     """
     from src.train_lib import load_classifier
     import numpy as np
-    from sklearn.metrics import confusion_matrix, accuracy_score
+    from sklearn.metrics import confusion_matrix, classification_report
+
     from src.data_helpers import get_data
     import yaml
     from tqdm import tqdm
@@ -35,7 +37,11 @@ def metrics(model_name: str = "model", n_pred: int = 100):
     classify_gesture = load_classifier(model_name)
 
     # Seleciona N elementos aleatórios de data e classes
-    indices = np.random.choice(len(data), size=len(data) if n_pred <= 0 else min(n_pred, len(data)), replace=False)
+    indices = np.random.choice(
+        len(data),
+        size=len(data) if n_pred <= 0 else min(n_pred, len(data)),
+        replace=False,
+    )
     X_test = [data[i] for i in indices]
     y_test = [classes[i] for i in indices]
 
@@ -51,7 +57,11 @@ def metrics(model_name: str = "model", n_pred: int = 100):
 
     # Calcula a confusion matrix
     cm = confusion_matrix(y_true, y_pred)
-    print("Acuracia: ", accuracy_score(y_true, y_pred))
+    print(
+        classification_report(
+            y_true, y_pred, target_names=(["none"] + params["classes"])
+        )
+    )
 
     from sklearn.metrics import ConfusionMatrixDisplay
     import matplotlib.pyplot as plt
@@ -87,6 +97,7 @@ def captura(classe: str, COM: str = "COM5", baudrate: int = 115200):
         flask_app.run(host="0.0.0.0", port=5000)
     except KeyboardInterrupt:
         import os
+
         os._exit(1)
 
 
