@@ -11,7 +11,8 @@
               console.log('connected!');
         });
         socket.on('movimento', function(movimento) {
-              Alpine.store('movimentos').add(movimento)
+            console.log('movimento', movimento);
+            // Alpine.store('movimentos').add(movimento)
         });
   </script>
 </head>

@@ -5,6 +5,10 @@ import serial
 from src.train_lib import load_classifier
 import numpy as np
 import yaml
+from src.data_helpers import get_classes
+from src.data_helpers import preload_data
+
+preload_data("config/params.yaml", use_cache=True)
 
 app = Flask(__name__, template_folder="flask", static_folder="flask/static")
 socketio = SocketIO(app)
@@ -12,10 +16,7 @@ thread = None
 
 RUNNING = False
 
-with open("config/params.yaml", "r") as f:
-    params = yaml.safe_load(f)
-classes = ["none"] + params["classes"]
-
+classes = get_classes()
 
 def serial_thread(porta_serial: str, baudrate: int, timesteps: int, model_name: str):
     global RUNNING
@@ -39,6 +40,7 @@ def serial_thread(porta_serial: str, baudrate: int, timesteps: int, model_name: 
             linha = ser.readline().decode("utf-8").strip()
 
             if not linha:
+                print("⚠️ Linha vazia recebida!")
                 continue
 
             try:
@@ -80,6 +82,6 @@ def index():
 def run_webapp(porta_serial: str, baudrate: int, timesteps: int, model_name: str):
     global RUNNING
 
-    thread = socketio.start_background_task(target=serial_thread, args=(porta_serial, baudrate, timesteps, model_name))  # type: ignore
+    thread = socketio.start_background_task(serial_thread, porta_serial, baudrate, timesteps, model_name)  # type: ignore
     socketio.run(app)
     RUNNING = False

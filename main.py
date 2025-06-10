@@ -130,6 +130,7 @@ def web(
     --baudrate : frequencia da porta serial
     """
     from src.webapp import run_webapp
+    
 
     run_webapp(COM, baudrate, timesteps, model_name)
 

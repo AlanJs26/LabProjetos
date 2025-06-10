@@ -1,6 +1,6 @@
 
 document.addEventListener('alpine:init', () => {
-
+  console.log('Alpine.js initialized')
   Alpine.store('movements', {
     data: [],
     // valid: ['Yuko', 'Wazari', 'Wazaari Awasete', 'Toketa', 'Sonomama', 'Osaekomi', 'Matte', 'Koka', 'Ippon', 'Hantei', 'Hajime'],
