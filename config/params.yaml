@@ -1,6 +1,6 @@
 
 # number of data elements to feed the model and once
-timesteps: 50
+timesteps: 200
 
 dataset_folder: dataset
 

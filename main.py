@@ -19,7 +19,7 @@ def train(model_name: str = "model"):
     from src.train_lib import train_model
     from src.data_helpers import preload_data
 
-    preload_data("config/params.yaml", use_cache=True)
+    preload_data("config/params.yaml", use_cache=False)
     train_model(model_name)
 
 

@@ -5,7 +5,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 from sklearn.base import BaseEstimator, TransformerMixin
-from src.data_helpers import get_data
+from src.data_helpers import get_data, get_classes
 import os
 from pathlib import Path
 import joblib
@@ -47,6 +47,8 @@ class ReshapeTo3D(BaseEstimator, TransformerMixin):
 def train_model(name: str):
     import yaml
 
+    all_classes = get_classes()
+
     with open("config/params.yaml", "r") as f:
         params = yaml.safe_load(f)
 
@@ -55,7 +57,7 @@ def train_model(name: str):
 
     num_features = data.shape[2]
     timesteps = params["timesteps"]
-    n_classes = len(params["classes"]) + 1
+    n_classes = len(all_classes)
 
     # Divisão treino/teste (corrigindo vazamento de dados)
     X_train, X_test, y_train, y_test = train_test_split(

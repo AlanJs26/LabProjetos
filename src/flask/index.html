@@ -12,7 +12,7 @@
         });
         socket.on('movimento', function(movimento) {
             console.log('movimento', movimento);
-            // Alpine.store('movimentos').add(movimento)
+            Alpine.store('movements').add(movimento)
         });
   </script>
 </head>
@@ -23,6 +23,15 @@
 
   <main>
     <button x-data @click="$store.movements.addRandom()">Clique</button>
+    <button 
+        onmousedown="setMovimento(true)" 
+        onmouseup="setMovimento(false)"
+        ontouchstart="setMovimento(true)" 
+        ontouchend="setMovimento(false)"
+        id="movimento-btn"
+    >
+        Pressione para mover
+    </button>
     <div>
       <template x-data x-for="data in $store.movements.data" :key="data.key">
 

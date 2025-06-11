@@ -1,4 +1,17 @@
 
+function setMovimento(ativo) {
+  const btn = document.getElementById('movimento-btn')
+  btn.style.background = ativo ? 'green' : '#007BFF'
+  fetch('/set_movimento', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ ativo: ativo })
+  });
+}
+
+
 document.addEventListener('alpine:init', () => {
   console.log('Alpine.js initialized')
   Alpine.store('movements', {
