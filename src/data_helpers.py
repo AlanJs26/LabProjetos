@@ -77,6 +77,7 @@ def aplicar_undersampling(
                                        aplicável (ex: dados vazios, uma única classe),
                                        retorna os dados originais.
     """
+    global all_classes
     if x_data.shape[0] == 0:
         if verbose:
             print("\nIgnorando undersampling: Dados de entrada vazios.")
@@ -97,7 +98,10 @@ def aplicar_undersampling(
 
     if verbose:
         print("\nRealizando undersampling...")
-        print(f"Contagem original das classes: {dict(contagens_iniciais_dict)}")
+        unicas_with_name = {
+            all_classes[int(k)]: v for k, v in dict(contagens_iniciais_dict).items()
+        }
+        print(f"Contagem original das classes: {unicas_with_name}")
 
     # Determina o número de amostras da classe minoritária
     min_amostras = min(contagens_np)

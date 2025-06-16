@@ -8,7 +8,7 @@ app = typer.Typer(context_settings={"help_option_names": ["-h", "--help"]})
 def debug():
     from src.data_helpers import preload_data
 
-    preload_data("config/params.yaml", use_cache=True)
+    preload_data("config/params.yaml", use_cache=False)
 
 
 @app.command()
@@ -130,7 +130,6 @@ def web(
     --baudrate : frequencia da porta serial
     """
     from src.webapp import run_webapp
-    
 
     run_webapp(COM, baudrate, timesteps, model_name)
 

@@ -20,6 +20,7 @@ RUNNING = False
 
 classes = get_classes()
 
+
 def serial_thread(porta_serial: str, baudrate: int, timesteps: int, model_name: str):
     global RUNNING
     global classes
@@ -50,12 +51,12 @@ def serial_thread(porta_serial: str, baudrate: int, timesteps: int, model_name: 
                 dados_float = [float(valor) for valor in linha.split(",")]
                 if len(dados_float) != 12:
                     continue
-                
+
                 if MOVIMENTO_ATIVO:
                     data.append(dados_float)
 
                 if len(data) == timesteps:
-                # if len(data)>0 and not MOVIMENTO_ATIVO:
+                    # if len(data)>0 and not MOVIMENTO_ATIVO:
                     prediction = classify_gesture(
                         np.expand_dims(np.array(data), axis=0)
                     )
@@ -83,17 +84,16 @@ def index():
     global classes
     return render_template("index.html", classes=classes)
 
+
 @app.route("/set_movimento", methods=["POST"])
 def set_movimento():
     global MOVIMENTO_ATIVO
     global data
     response = request.get_json()
-    if response['ativo'] == True:
+    if response["ativo"] == True:
         data = []
     MOVIMENTO_ATIVO = response["ativo"]
-    print(
-        f"{'🟢 Iniciou' if MOVIMENTO_ATIVO else '🔴 Parou'} o movimento"
-    )
+    print(f"{'🟢 Iniciou' if MOVIMENTO_ATIVO else '🔴 Parou'} o movimento")
     return jsonify(success=True)
 
 
