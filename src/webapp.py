@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template_string, render_template, request, jsonify
 from flask_socketio import SocketIO
 import time
 import serial
@@ -97,9 +97,63 @@ def set_movimento():
     return jsonify(success=True)
 
 
+@app.route("/celular")
+def celular():
+    global MOVIMENTO_ATIVO
+    return render_template_string(
+        """
+        <html>
+        <head>
+            <title>Marcador de Movimento</title>
+            <style>
+                * {
+                    user-select: none;
+                }
+                body {
+                    font-family: Arial; text-align: center; padding: 30px;
+                    display: flex; flex-direction: column; height: 100vh; margin: 0; padding: 0;
+                }
+                button {
+                    font-size: 30px; padding: 20px 40px; border-radius: 12px; height: 100%;
+                    border: none; color: white;
+                    background-color: #007BFF;
+                }
+            </style>
+            <script>
+                function setMovimento(ativo) {
+                    const btn = document.getElementById('btn')
+                    btn.style.background = ativo ? 'green' : '#007BFF'
+                    fetch('/set_movimento', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ativo: ativo})
+                    });
+                }
+            </script>
+        </head>
+        <body>
+            <h1>Movimento</h1>
+            <button 
+                onmousedown="setMovimento(true)" 
+                onmouseup="setMovimento(false)"
+                ontouchstart="setMovimento(true)" 
+                ontouchend="setMovimento(false)"
+                id="btn"
+            >
+                Pressione para mover
+            </button>
+        </body>
+        </html>
+    """,
+        ativo=MOVIMENTO_ATIVO,
+    )
+
+
 def run_webapp(porta_serial: str, baudrate: int, timesteps: int, model_name: str):
     global RUNNING
 
-    thread = socketio.start_background_task(serial_thread, porta_serial, baudrate, timesteps, model_name)  # type: ignore
+    # thread = socketio.start_background_task(serial_thread, porta_serial, baudrate, timesteps, model_name)  # type: ignore
     socketio.run(app)
     RUNNING = False
